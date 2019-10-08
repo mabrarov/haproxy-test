@@ -1,3 +1,5 @@
 FROM nginx:alpine
 
-#TODO
+RUN apk add --no-cache nginx-mod-http-lua
+
+COPY nginx.conf /etc/nginx/
