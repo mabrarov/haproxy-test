@@ -1,0 +1,14 @@
+version: "2.1"
+
+services:
+  balancer:
+    build: "balancer"
+    image: "abrarov/haproxy-test-balancer"
+    logging:
+      driver: "json-file"
+
+  backend:
+    build: "backend"
+    image: "abrarov/backend-test-balancer"
+    logging:
+      driver: "json-file"
