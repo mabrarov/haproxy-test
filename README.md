@@ -51,6 +51,6 @@ Cleanup:
 
 ```bash
 docker-compose down -v -t 0 && \
-docker rmi -f abrarov/backend-test-backend && \
+docker rmi -f abrarov/haproxy-test-backend && \
 docker rmi -f abrarov/haproxy-test-balancer
 ```
