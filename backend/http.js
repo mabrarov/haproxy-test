@@ -12,3 +12,5 @@ function http(r) {
   s += "</html>\n";
   r.return(200, s);
 }
+
+export default {http};
