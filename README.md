@@ -14,13 +14,13 @@ docker-compose up -d
 Add one more backend server:
 
 ```bash
-docker-compose scale backend=2
+docker-compose up -d --scale backend=2 --no-recreate
 ```
 
 Check output of balancer:
 
 ```bash
-curl http://localhost
+curl -s http://localhost
 ```
 
 Output of balancer should look like:
