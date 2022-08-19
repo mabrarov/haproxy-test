@@ -1,0 +1,38 @@
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: {{ include "blackbox-test.backend.serviceName" . | quote }}
+  labels:
+    {{- include "blackbox-test.labels" . | nindent 4 }}
+    {{- include "blackbox-test.backend.componentLabels" . | nindent 4 }}
+    {{- if .Values.labels }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.labels "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.labels }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.labels "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.service.labels }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.service.labels "context" $) | nindent 4 }}
+    {{- end }}
+  {{- if or .Values.annotations .Values.backend.annotations .Values.backend.service.annotations }}
+  annotations:
+    {{- if .Values.annotations }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.annotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.annotations }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.annotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.service.annotations }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.service.annotations "context" $) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  clusterIP: None
+  type: "ClusterIP"
+  ports:
+    - name: {{ include "blackbox-test.backend.servicePortName" . | quote }}
+      port: {{ .Values.backend.service.port }}
+      targetPort: {{ include "blackbox-test.backend.containerPortName" . | quote }}
+  selector:
+    {{- include "blackbox-test.matchLabels" . | nindent 4 }}
+    {{- include "blackbox-test.backend.componentLabels" . | nindent 4 }}

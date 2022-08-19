@@ -1,0 +1,58 @@
+{{- if .Capabilities.APIVersions.Has "route.openshift.io/v1" -}}
+apiVersion: "route.openshift.io/v1"
+kind: "Route"
+{{- else }}
+apiVersion: "networking.k8s.io/v1"
+kind: "Ingress"
+{{- end }}
+metadata:
+  name: {{ include "blackbox-test.backend.ingressName" . | quote }}
+  labels:
+    {{- include "blackbox-test.labels" . | nindent 4 }}
+    {{- include "blackbox-test.backend.componentLabels" . | nindent 4 }}
+    {{- if .Values.labels }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.labels "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.labels }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.labels "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.ingress.labels }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.ingress.labels "context" $) | nindent 4 }}
+    {{- end }}
+  {{- if or (.Capabilities.APIVersions.Has "route.openshift.io/v1") .Values.annotations .Values.backend.annotations .Values.backend.ingress.annotations }}
+  annotations:
+    {{- if .Capabilities.APIVersions.Has "route.openshift.io/v1" }}
+    haproxy.router.openshift.io/disable_cookies: "true"
+    {{- end }}
+    {{- if .Values.annotations }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.annotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.annotations }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.annotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.ingress.annotations }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.ingress.annotations "context" $) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  {{- if .Capabilities.APIVersions.Has "route.openshift.io/v1" }}
+  host: {{ .Values.backend.ingress.host | quote }}
+  path: "/"
+  port:
+    targetPort: {{ include "blackbox-test.backend.servicePortName" . | quote }}
+  to:
+    kind: "Service"
+    name: {{ include "blackbox-test.backend.serviceName" . | quote }}
+  {{- else }}
+  rules:
+    - host: {{ .Values.backend.ingress.host | quote }}
+      http:
+        paths:
+          - path: "/"
+            pathType: "Prefix"
+            backend:
+              service:
+                name: {{ include "blackbox-test.backend.serviceName" . | quote }}
+                port:
+                  name: {{ include "blackbox-test.backend.servicePortName" . | quote }}
+  {{- end }}
