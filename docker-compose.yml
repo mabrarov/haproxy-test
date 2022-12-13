@@ -17,3 +17,11 @@ services:
     image: "abrarov/haproxy-test-backend"
     logging:
       driver: "json-file"
+
+  blackbox:
+    build: "blackbox"
+    image: "abrarov/haproxy-test-blackbox"
+    ports:
+    - "9115:9115"
+    logging:
+      driver: "json-file"

@@ -1,0 +1,96 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: {{ include "blackbox-test.backend.deploymentName" . | quote }}
+  labels:
+    {{- include "blackbox-test.labels" . | nindent 4 }}
+    {{- include "blackbox-test.backend.componentLabels" . | nindent 4 }}
+    {{- if .Values.labels }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.labels "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.labels }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.labels "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.deploymentLabels }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.deploymentLabels "context" $) | nindent 4 }}
+    {{- end }}
+  {{- if or .Values.annotations .Values.backend.annotations .Values.backend.deploymentAnnotations }}
+  annotations:
+    {{- if .Values.annotations }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.annotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.annotations }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.annotations "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.deploymentAnnotations }}
+    {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.deploymentAnnotations "context" $) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "blackbox-test.matchLabels" . | nindent 6 }}
+      {{- include "blackbox-test.backend.componentLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "blackbox-test.labels" . | nindent 8 }}
+        {{- include "blackbox-test.backend.componentLabels" . | nindent 8 }}
+        {{- if .Values.labels }}
+        {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.labels "context" $) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.backend.labels }}
+        {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.labels "context" $) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.backend.podLabels }}
+        {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.podLabels "context" $) | nindent 8 }}
+        {{- end }}
+      {{- if or .Values.annotations .Values.backend.annotations .Values.backend.podAnnotations }}
+      annotations:
+        {{- if .Values.annotations }}
+        {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.annotations "context" $) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.backend.annotations }}
+        {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.annotations "context" $) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.backend.podAnnotations }}
+        {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.podAnnotations "context" $) | nindent 8 }}
+        {{- end }}
+      {{- end }}
+    spec:
+      {{- if .Values.backend.image.pullSecret }}
+      imagePullSecrets:
+        - name: {{ include "blackbox-test.backend.imagePullSecretName" . | quote }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.backend.containerName | quote }}
+          image: {{ include "blackbox-test.backend.imageFullName" . | quote }}
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy | quote }}
+          ports:
+            - name: {{ include "blackbox-test.backend.containerPortName" . | quote }}
+              containerPort: 8080
+          livenessProbe:
+            httpGet:
+              port: {{ include "blackbox-test.backend.containerPortName" . | quote }}
+              httpHeaders:
+                - name: "User-Agent"
+                  value: "liveness-probe"
+            initialDelaySeconds: {{ .Values.backend.livenessProbe.initialDelay }}
+          readinessProbe:
+            httpGet:
+              port: {{ include "blackbox-test.backend.containerPortName" . | quote }}
+              httpHeaders:
+                - name: "User-Agent"
+                  value: "readiness-probe"
+            initialDelaySeconds: {{ .Values.backend.readinessProbe.initialDelay }}
+          volumeMounts:
+            - mountPath: "/var/cache/nginx"
+              name: "nginx-cache"
+            - mountPath: "/var/run"
+              name: "run"
+      volumes:
+        - name: "nginx-cache"
+          emptyDir: { }
+        - name: "run"
+          emptyDir: { }
