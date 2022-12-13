@@ -19,10 +19,28 @@ metadata:
     {{- if .Values.backend.ingress.labels }}
     {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.ingress.labels "context" $) | nindent 4 }}
     {{- end }}
-  {{- if or (.Capabilities.APIVersions.Has "route.openshift.io/v1") .Values.annotations .Values.backend.annotations .Values.backend.ingress.annotations }}
   annotations:
     {{- if .Capabilities.APIVersions.Has "route.openshift.io/v1" }}
     haproxy.router.openshift.io/disable_cookies: "true"
+    {{- else }}
+    nginx.ingress.kubernetes.io/configuration-snippet: |-
+      set $proxy_forwarded "by=$server_addr:$server_port";
+      if ($server_addr ~ "^.*:.*$") {
+        set $proxy_forwarded "by=\"[$server_addr]:$server_port\"";
+      }
+      set $proxy_forwarded_for "$remote_addr:$remote_port";
+      if ($remote_addr ~ "^.*:.*$") {
+        set $proxy_forwarded_for "\"[$remote_addr]:$remote_port\"";
+      }
+      set $proxy_forwarded "$proxy_forwarded;for=$proxy_forwarded_for";
+      if ($http_host ~ "^.+$") {
+        set $proxy_forwarded "$proxy_forwarded;host=$http_host";
+      }
+      set $proxy_forwarded "$proxy_forwarded;proto=$scheme";
+      if ($http_forwarded ~ "^.+$") {
+        set $proxy_forwarded "$http_forwarded,$proxy_forwarded";
+      }
+      proxy_set_header Forwarded "$proxy_forwarded";
     {{- end }}
     {{- if .Values.annotations }}
     {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.annotations "context" $) | nindent 4 }}
@@ -33,7 +51,6 @@ metadata:
     {{- if .Values.backend.ingress.annotations }}
     {{- include "blackbox-test.tplValuesRender" (dict "value" .Values.backend.ingress.annotations "context" $) | nindent 4 }}
     {{- end }}
-  {{- end }}
 spec:
   {{- if .Capabilities.APIVersions.Has "route.openshift.io/v1" }}
   host: {{ .Values.backend.ingress.host | quote }}
