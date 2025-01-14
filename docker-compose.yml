@@ -1,4 +1,8 @@
-version: "2.0"
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "12m"
+    max-file: "5"
 
 services:
   balancer:
@@ -8,12 +12,10 @@ services:
       BACKEND_HOST: "backend"
       BACKEND_PORT: "8080"
     ports:
-    - "80:8080"
-    logging:
-      driver: "json-file"
+      - "80:8080"
+    logging: *default-logging
 
   backend:
     build: "backend"
     image: "abrarov/haproxy-test-backend"
-    logging:
-      driver: "json-file"
+    logging: *default-logging
