@@ -2,19 +2,21 @@
 
 Prerequisites:
 
-1. Docker 1.12.3+
-1. Docker Compose
+1. Docker 20+
+1. [Docker Compose](https://docs.docker.com/compose/):
+    * [Docker Compose standalone](https://docs.docker.com/compose/install/standalone/) 2+ or
+    * [Docker Compose plugin](https://docs.docker.com/compose/install/linux/) (this README commands use Docker Compose plugin syntax)
 
 Start containers:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 Add one more backend server:
 
 ```bash
-docker-compose up -d --scale backend=2 --no-recreate
+docker compose up -d --scale backend=2 --no-recreate
 ```
 
 Check output of balancer:
@@ -27,7 +29,7 @@ Output of balancer should look like:
 
 ```html
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 <head>
 <title>Backend</title>
 </head>
@@ -44,13 +46,13 @@ Ensure that if output is requested multiple times then different `hostname` is r
 Stop containers:
 
 ```bash
-docker-compose stop
+docker compose stop
 ```
 
 Cleanup:
 
 ```bash
-docker-compose down -v -t 0 && \
+docker compose down -v -t 0 && \
 docker rmi -f abrarov/haproxy-test-backend && \
 docker rmi -f abrarov/haproxy-test-balancer
 ```
