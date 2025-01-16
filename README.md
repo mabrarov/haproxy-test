@@ -13,10 +13,10 @@ Start containers:
 docker compose up -d
 ```
 
-Add one more backend server:
+Add more backend servers:
 
 ```bash
-docker compose up -d --scale backend=2 --no-recreate
+docker compose up -d --scale backend=4 --no-recreate
 ```
 
 Check output of balancer:
@@ -56,27 +56,31 @@ Ensure that Blackbox exporter tries all IPs it was able to resolve:
 1. Check address resolving log records of Blackbox exporter
 
     ```bash
-    docker-compose logs blackbox | grep -F 'Resolved target address'
+    docker compose logs blackbox | grep -F 'Resolved target address'
     ```
 
     expected output looks like (contains different values in `ip=` part of the log records)
 
     ```text
-    blackbox_1  | ts=2022-08-18T06:03:23.846Z caller=main.go:212 module=http target=backend:8080 level=debug msg="Resolved target address" target=backend ip=172.19.0.2
-    blackbox_1  | ts=2022-08-18T06:03:53.863Z caller=main.go:212 module=http target=backend:8080 level=debug msg="Resolved target address" target=backend ip=172.19.0.4
+    blackbox-1  | time=2025-01-16T16:26:35.444Z level=INFO source=utils.go:96 msg="Resolved target address" module=http target=backend:8080 target=backend ip=172.18.0.5
+    blackbox-1  | time=2025-01-16T16:26:36.218Z level=INFO source=utils.go:96 msg="Resolved target address" module=http target=backend:8080 target=backend ip=172.18.0.5
+    blackbox-1  | time=2025-01-16T16:26:36.919Z level=INFO source=utils.go:96 msg="Resolved target address" module=http target=backend:8080 target=backend ip=172.18.0.6
+    blackbox-1  | time=2025-01-16T16:26:37.599Z level=INFO source=utils.go:96 msg="Resolved target address" module=http target=backend:8080 target=backend ip=172.18.0.7
     ```
 
 1. Check access log of backend and ensure that all backends are hit by Blackbox exporter
 
     ```bash
-    docker-compose logs backend | grep blackbox
+    docker compose logs backend | grep blackbox
     ```
 
     expected output looks like (includes all backends)
 
     ```text
-    backend_1   | [access] 172.19.0.3 - - [18/Aug/2022:06:03:06 +0000] "GET / HTTP/1.1" 200 97 "-" "blackbox" "-"
-    backend_2   | [access] 172.19.0.3 - - [18/Aug/2022:06:04:23 +0000] "GET / HTTP/1.1" 200 97 "-" "blackbox" "-"
+    backend-3  | { "time": "2025-01-16T16:26:35+00:00", "request_id": "f1297667e3b27509a20846eac7d0d9ad", "user": "-", "address": "172.18.0.3", "connection_from": "172.18.0.3", "bytes_received": 79, "bytes_sent": 253, "protocol": "HTTP/1.1", "scheme": "http", "method": "GET", "host": "backend", "path": "/index.html", "request_query": "-", "referrer": "-", "user_agent": "blackbox", "request_time": 0.000, "status": 200, "content_type": "-", "vhost": "", "forwarded": "-" }
+    backend-3  | { "time": "2025-01-16T16:26:36+00:00", "request_id": "4225832511ecf5cc29c2c6ae85bdf3e6", "user": "-", "address": "172.18.0.3", "connection_from": "172.18.0.3", "bytes_received": 79, "bytes_sent": 253, "protocol": "HTTP/1.1", "scheme": "http", "method": "GET", "host": "backend", "path": "/index.html", "request_query": "-", "referrer": "-", "user_agent": "blackbox", "request_time": 0.000, "status": 200, "content_type": "-", "vhost": "", "forwarded": "-" }
+    backend-2  | { "time": "2025-01-16T16:26:36+00:00", "request_id": "6bb25485a6d0b16932a4debdf741187d", "user": "-", "address": "172.18.0.3", "connection_from": "172.18.0.3", "bytes_received": 79, "bytes_sent": 253, "protocol": "HTTP/1.1", "scheme": "http", "method": "GET", "host": "backend", "path": "/index.html", "request_query": "-", "referrer": "-", "user_agent": "blackbox", "request_time": 0.000, "status": 200, "content_type": "-", "vhost": "", "forwarded": "-" }
+    backend-4  | { "time": "2025-01-16T16:26:37+00:00", "request_id": "cac3c9793e8e815953d4672e55dfe550", "user": "-", "address": "172.18.0.3", "connection_from": "172.18.0.3", "bytes_received": 79, "bytes_sent": 253, "protocol": "HTTP/1.1", "scheme": "http", "method": "GET", "host": "backend", "path": "/index.html", "request_query": "-", "referrer": "-", "user_agent": "blackbox", "request_time": 0.000, "status": 200, "content_type": "-", "vhost": "", "forwarded": "-" }
     ```
 
 Stop containers:
