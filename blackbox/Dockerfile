@@ -1,4 +1,4 @@
-FROM blackbox_exporter
+FROM abrarov/blackbox_exporter
 
 COPY blackbox.yml /usr/local/etc/blackbox/
 
