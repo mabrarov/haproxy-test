@@ -110,14 +110,14 @@ docker build -t abrarov/haproxy-test-blackbox blackbox
 Install kubectl, Helm and Minikube
 
 ```bash
-k8s_version='1.24.4' && \
-curl -Ls "https://storage.googleapis.com/kubernetes-release/release/v${k8s_version}/bin/linux/amd64/kubectl" \
+k8s_version='1.32.0' && \
+curl -Ls "https://dl.k8s.io/release/v${k8s_version}/bin/linux/amd64/kubectl" \
   | sudo tee /usr/local/bin/kubectl > /dev/null && \
 sudo chmod +x /usr/local/bin/kubectl && \
-helm_version='3.9.3' && \
+helm_version='3.17.0' && \
 curl -Ls "https://get.helm.sh/helm-v${helm_version}-linux-amd64.tar.gz" \
   | sudo tar -xz --strip-components=1 -C /usr/local/bin "linux-amd64/helm" && \
-minikube_version='1.26.1' && \
+minikube_version='1.35.0' && \
 curl -Ls "https://github.com/kubernetes/minikube/releases/download/v${minikube_version}/minikube-linux-amd64.tar.gz" \
   | tar -xzO --strip-components=1 "out/minikube-linux-amd64" \
   | sudo tee /usr/local/bin/minikube > /dev/null && \
@@ -127,7 +127,7 @@ sudo chmod +x /usr/local/bin/minikube
 Start K8s
 
 ```bash
-minikube start --driver=docker --addons=ingress,registry,dashboard
+minikube start --driver=docker --addons=ingress,registry
 ```
 
 Push built images into K8s internal image registry
