@@ -14,6 +14,8 @@ services:
     ports:
       - "80:8080"
     logging: *default-logging
+    labels:
+      shipyard.route: "/"
 
   backend:
     build: "backend"
