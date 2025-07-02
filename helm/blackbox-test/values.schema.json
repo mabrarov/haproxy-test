@@ -1,0 +1,406 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": [
+    "backend",
+    "blackbox"
+  ],
+  "properties": {
+    "nameOverride": {
+      "type": "string"
+    },
+    "fullnameOverride": {
+      "type": "string"
+    },
+    "labels": {
+      "type": [
+        "object",
+        "string"
+      ]
+    },
+    "annotations": {
+      "type": [
+        "object",
+        "string"
+      ]
+    },
+    "backend": {
+      "description": "configuration of backend pod container",
+      "type": "object",
+      "required": [
+        "containerName",
+        "image",
+        "livenessProbe",
+        "readinessProbe",
+        "replicaCount",
+        "service",
+        "ingress"
+      ],
+      "properties": {
+        "labels": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "annotations": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "deploymentLabels": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "deploymentAnnotations": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "podLabels": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "podAnnotations": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "containerName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "image": {
+          "type": "object",
+          "required": [
+            "registry",
+            "repository",
+            "pullPolicy"
+          ],
+          "properties": {
+            "registry": {
+              "type": "string",
+              "minLength": 1
+            },
+            "repository": {
+              "type": "string",
+              "minLength": 1
+            },
+            "tag": {
+              "type": "string"
+            },
+            "pullPolicy": {
+              "type": "string",
+              "pattern": "^(Always|Never|IfNotPresent)$"
+            },
+            "pullSecret": {
+              "description": "docker authentication credentials for image registry",
+              "type": "object",
+              "required": [
+                "username",
+                "password",
+                "email"
+              ],
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "password": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "email": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        "livenessProbe": {
+          "type": "object",
+          "required": [
+            "initialDelay"
+          ],
+          "properties": {
+            "initialDelay": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "readinessProbe": {
+          "type": "object",
+          "required": [
+            "initialDelay"
+          ],
+          "properties": {
+            "initialDelay": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "replicaCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "service": {
+          "description": "backend service configuration",
+          "type": "object",
+          "required": [
+            "port"
+          ],
+          "properties": {
+            "labels": {
+              "type": [
+                "object",
+                "string"
+              ]
+            },
+            "annotations": {
+              "type": [
+                "object",
+                "string"
+              ]
+            },
+            "port": {
+              "description": "service port",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            }
+          }
+        },
+        "ingress": {
+          "description": "backend ingress configuration",
+          "type": "object",
+          "required": [
+            "host"
+          ],
+          "properties": {
+            "labels": {
+              "type": [
+                "object",
+                "string"
+              ]
+            },
+            "annotations": {
+              "type": [
+                "object",
+                "string"
+              ]
+            },
+            "host": {
+              "description": "ingress hostname",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "blackbox": {
+      "description": "configuration of blackbox pod container",
+      "type": "object",
+      "required": [
+        "containerName",
+        "image",
+        "livenessProbe",
+        "readinessProbe",
+        "replicaCount",
+        "service",
+        "ingress"
+      ],
+      "properties": {
+        "labels": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "annotations": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "deploymentLabels": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "deploymentAnnotations": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "serviceLabels": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "serviceAnnotations": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "podLabels": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "podAnnotations": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "containerName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "image": {
+          "type": "object",
+          "required": [
+            "registry",
+            "repository",
+            "pullPolicy"
+          ],
+          "properties": {
+            "registry": {
+              "type": "string",
+              "minLength": 1
+            },
+            "repository": {
+              "type": "string",
+              "minLength": 1
+            },
+            "tag": {
+              "type": "string"
+            },
+            "pullPolicy": {
+              "type": "string",
+              "pattern": "^(Always|Never|IfNotPresent)$"
+            },
+            "pullSecret": {
+              "description": "docker authentication credentials for image registry",
+              "type": "object",
+              "required": [
+                "username",
+                "password",
+                "email"
+              ],
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "password": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "email": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        "livenessProbe": {
+          "type": "object",
+          "required": [
+            "initialDelay"
+          ],
+          "properties": {
+            "initialDelay": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "readinessProbe": {
+          "type": "object",
+          "required": [
+            "initialDelay"
+          ],
+          "properties": {
+            "initialDelay": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "replicaCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "service": {
+          "description": "blackbox service configuration",
+          "type": "object",
+          "required": [
+            "port"
+          ],
+          "properties": {
+            "labels": {
+              "type": [
+                "object",
+                "string"
+              ]
+            },
+            "annotations": {
+              "type": [
+                "object",
+                "string"
+              ]
+            },
+            "port": {
+              "description": "service port",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            }
+          }
+        },
+        "ingress": {
+          "description": "blackbox ingress configuration",
+          "type": "object",
+          "required": [
+            "host"
+          ],
+          "properties": {
+            "labels": {
+              "type": [
+                "object",
+                "string"
+              ]
+            },
+            "annotations": {
+              "type": [
+                "object",
+                "string"
+              ]
+            },
+            "host": {
+              "description": "ingress hostname",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

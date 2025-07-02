@@ -1,0 +1,4 @@
+1. Backend URL: http://{{ .Values.backend.ingress.host }}
+2. Blackbox URL: http://{{ .Values.blackbox.ingress.host }}
+3. Blackbox probe of backend using first address from the list of resolved IP addresses: http://{{ .Values.blackbox.ingress.host }}/probe?target={{ include "blackbox-test.backend.serviceName" . }}.{{ .Release.Namespace }}.svc%3A{{ .Values.backend.service.port }}&module=http
+4. Blackbox probe of backend using random address from the list of resolved IP addresses: http://{{ .Values.blackbox.ingress.host }}/probe?target={{ include "blackbox-test.backend.serviceName" . }}.{{ .Release.Namespace }}.svc%3A{{ .Values.backend.service.port }}&module=http_random_ip

@@ -1,0 +1,58 @@
+nameOverride: ""
+fullnameOverride: ""
+labels: { }
+annotations: { }
+
+backend:
+  labels: { }
+  annotations: { }
+  deploymentLabels: { }
+  deploymentAnnotations: { }
+  podLabels: { }
+  podAnnotations: { }
+  containerName: "backend"
+  image:
+    registry: "docker.io"
+    repository: "abrarov/haproxy-test-backend"
+    tag: "latest"
+    pullPolicy: "IfNotPresent"
+  livenessProbe:
+    initialDelay: 5
+  readinessProbe:
+    initialDelay: 5
+  replicaCount: 3
+  service:
+    labels: { }
+    annotations: { }
+    port: 8080
+  ingress:
+    labels: { }
+    annotations: { }
+    host: "backend.local"
+
+blackbox:
+  labels: { }
+  annotations: { }
+  deploymentLabels: { }
+  deploymentAnnotations: { }
+  podLabels: { }
+  podAnnotations: { }
+  containerName: "blackbox"
+  image:
+    registry: "docker.io"
+    repository: "prom/blackbox-exporter"
+    tag: "v0.22.0"
+    pullPolicy: "IfNotPresent"
+  livenessProbe:
+    initialDelay: 5
+  readinessProbe:
+    initialDelay: 5
+  replicaCount: 1
+  service:
+    labels: { }
+    annotations: { }
+    port: 9115
+  ingress:
+    labels: { }
+    annotations: { }
+    host: "blackbox.local"
