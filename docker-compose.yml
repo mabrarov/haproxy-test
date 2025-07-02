@@ -9,6 +9,8 @@ services:
     build: "balancer"
     image: "abrarov/haproxy-test-balancer"
     environment:
+      RESOLVER_HOST: "127.0.0.11"
+      RESOLVER_PORT: "53"
       BACKEND_HOST: "backend"
       BACKEND_PORT: "8080"
     ports:
